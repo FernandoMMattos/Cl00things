@@ -32,7 +32,7 @@ const useProductImage = (
 
   const saveImage = async () => {
     if (image.trim()) {
-      await updateProduct(userId, productId, { image });
+      await updateProduct(userId, productId.toString(), { image });
     }
   };
 

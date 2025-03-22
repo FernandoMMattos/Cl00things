@@ -28,7 +28,7 @@ const NewClothingCard = ({ onClose }: { onClose: () => void }) => {
   const { formData, handleChange, handleSelectChange, resetForm } =
     useProductForm(user);
   const { image, handleImageUpload, handleImageUrlChange, saveImage } =
-    useProductImage(user, formData.id, formData.image);
+    useProductImage(user, Number(formData.id), formData.image);
   const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(false);
 
