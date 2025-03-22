@@ -1,0 +1,9 @@
+.cards_section {
+  margin: 0 2.5%;
+}
+
+@media screen and (max-width: 768px) {
+  .cards_section {
+    margin: 0;
+  }
+}

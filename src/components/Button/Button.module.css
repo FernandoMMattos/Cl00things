@@ -1,0 +1,15 @@
+.btn {
+  border: 2px solid var(--accent);
+  width: 100px;
+  height: 45px;
+  margin: 0 10px;
+  background-color: var(--primary);
+  border-radius: 4px;
+  font-weight: bold;
+  color: var(--highlight);
+  transition: all 0.3s ease-in-out;
+}
+
+.btn:hover {
+  border: 2px solid var(--action);
+}

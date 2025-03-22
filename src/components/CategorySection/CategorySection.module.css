@@ -1,0 +1,56 @@
+.title {
+  position: sticky;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin: 10px;
+  font-size: 2rem;
+}
+
+.carousel_container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.slick-list {
+  padding: 10px 0 !important; /* Adds space above and below carousel */
+}
+
+.slick-slide {
+  display: flex;
+  justify-content: center;
+  padding: 0 5px; /* Ensures a 10px gap between items (5px left + 5px right) */
+}
+
+.cards_div {
+  display: flex;
+  gap: 10px; /* Space between cards */
+  margin-top: 20px;
+}
+
+.cards_div > * {
+  flex: 0 0 auto;
+  width: 300px;
+  scroll-snap-align: start;
+}
+
+/* Hide arrows on mobile */
+@media (max-width: 768px) {
+  .slick-slide {
+    padding: 0;
+  }
+
+  .slick-slider .slick-prev,
+  .slick-slider .slick-next {
+    display: none !important;
+  }
+
+  /* Show only one card per view */
+  .cards_div > * {
+    width: 100%;
+  }
+}
+
+.p {
+  margin-left: 10px;
+}
