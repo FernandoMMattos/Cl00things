@@ -100,3 +100,14 @@
   width: 50%;
   margin-top: 22rem;
 }
+
+@media screen and (max-width: 768px) {
+  .overlay {
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  .logout {
+    margin-bottom: 1rem;
+  }
+}

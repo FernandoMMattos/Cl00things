@@ -31,7 +31,8 @@ const addProduct = async (userId: string, newProduct: IProduct) => {
       image: newProduct.image,
     };
 
-    const productRef = doc(db, `users/${userId}/products`, formattedProduct.id);
+    const productId = String(newProduct.id);
+    const productRef = doc(db, `users/${userId}/products`, productId);
     await setDoc(productRef, formattedProduct);
   } catch (error) {
     console.error("❌ Error adding product:", error);
