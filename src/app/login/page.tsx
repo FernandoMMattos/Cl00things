@@ -1,21 +1,22 @@
+"use client";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { SignInUser } from "@/services/loginService";
 import { FirebaseError } from "firebase/app";
 import LoginForm from "@/components/Login";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await SignInUser(email, password);
       console.log("User logged in");
-      navigate("/home");
+      router.replace("/home");
       toast.success("User logged in", { position: "bottom-left" });
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
@@ -41,6 +42,7 @@ const LoginPage = () => {
           if (name === "password") setPassword(value);
         }}
       />
+      <ToastContainer />
     </div>
   );
 };

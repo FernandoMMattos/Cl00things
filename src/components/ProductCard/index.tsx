@@ -58,7 +58,7 @@ const ProductCard = ({
         </section>
       ) : (
         <Card className={styles.card}>
-          <img src={product.image} alt={product.name} className={styles.img} />
+          <img src={product.image} alt={product.name} className={styles.img}/>
           <CardContent>
             <CardTitle className={styles.card_title}>{product.name}</CardTitle>
             <h3 className={styles.h3}>{product.brand}</h3>

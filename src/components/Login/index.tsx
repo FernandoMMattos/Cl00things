@@ -1,11 +1,12 @@
+"use client"
 import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
 import LoginGoogle from "./Google";
 import styles from "./Login.module.css";
+import { useRouter } from "next/navigation";
 
 interface LoginFormProps {
   formData: {
@@ -17,13 +18,12 @@ interface LoginFormProps {
 }
 
 const LoginForm = ({ formData, onChange, onSubmit }: LoginFormProps) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
-  // Memoized navigation functions
-  const goToRegister = useCallback(() => navigate("/register"), [navigate]);
+  const goToRegister = useCallback(() => router.push("/register"), [router]);
   const goToForgotPassword = useCallback(
-    () => navigate("/forgot-password"),
-    [navigate]
+    () => router.push("/forgot-password"),
+    [router]
   );
 
   return (
@@ -58,7 +58,6 @@ const LoginForm = ({ formData, onChange, onSubmit }: LoginFormProps) => {
           autoComplete="current-password"
         />
 
-        {/* Better accessibility using <button> instead of <span> */}
         <button
           type="button"
           className={styles.forgot_password}

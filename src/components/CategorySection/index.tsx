@@ -13,6 +13,7 @@ interface CategorySectionProps {
   setEditingProduct: (product: IProduct | null) => void;
 }
 
+// eslint-disable-next-line react/display-name
 const CategorySection: React.FC<CategorySectionProps> = React.memo(
   ({ title, products, setEditingProduct }) => {
     const hasProducts = products.length > 0;

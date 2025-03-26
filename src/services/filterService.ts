@@ -1,7 +1,7 @@
 import { IProduct } from "@/types/IProduct";
 
 const filterByName = (products: IProduct[], searchTerm: string): IProduct[] => {
-  if (!searchTerm) return products; // No filter applied if search is empty
+  if (!searchTerm) return products;
   return products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm)
   );

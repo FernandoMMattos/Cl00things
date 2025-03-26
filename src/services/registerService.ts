@@ -1,13 +1,13 @@
-import { auth, db } from "@/firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
+import { auth, db } from "../firebaseConfig";
 
 export const registerUser = async (
   email: string,
   password: string,
   confirmPassword: string,
-  fname: string,
+  fname: string
 ): Promise<void> => {
   if (password !== confirmPassword) {
     throw new Error("Passwords do not match");

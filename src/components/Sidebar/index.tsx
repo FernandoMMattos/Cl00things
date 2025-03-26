@@ -1,6 +1,5 @@
 import { SignOutUser } from "@/services/loginService";
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { Slider } from "../ui/slider";
 import {
   Select,
@@ -24,9 +23,10 @@ import {
   SidebarHeader,
 } from "../ui/sidebar";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useRouter } from "next/navigation";
 
 const AppSidebar = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const user = useUserID();
   const isMobile = useIsMobile();
   const {
@@ -74,7 +74,7 @@ const AppSidebar = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
 
   const SignOut = () => {
     SignOutUser();
-    navigate("/");
+    router.replace("/");
   };
 
   return (
@@ -100,7 +100,7 @@ const AppSidebar = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
               }
             >
               <SelectTrigger className={styles.select_trigger}>
-                <SelectValue placeholder="Filter by brand" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent className={styles.select_content}>
                 {brands.map((brand) => (

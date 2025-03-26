@@ -1,4 +1,3 @@
-import { db } from "@/firebaseConfig";
 import { IProduct } from "@/types/IProduct";
 import {
   collection,
@@ -10,6 +9,7 @@ import {
   getDocs,
   getDoc,
 } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 
 const capitalizeFirstLetter = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
@@ -44,14 +44,40 @@ const updateProduct = async (
   updatedProduct: Partial<IProduct>
 ) => {
   try {
-    const productRef = doc(db, "users", userId, "products", productId);
-    const productSnapshot = await getDoc(productRef);
-    if (!productSnapshot.exists()) {
-      console.error(`Error: Product with ID ${productId} does not exist.`);
+    if (typeof userId !== "string" || typeof productId !== "string") {
+      console.log("Invalid userId or productId:", userId, productId);
       return;
     }
 
-    await updateDoc(productRef, updatedProduct);
+    const productRef = doc(db, "users", userId, "products", productId);
+    const productSnapshot = await getDoc(productRef);
+
+    if (!productSnapshot.exists()) {
+      console.log(`Error: Product with ID ${productId} does not exist.`);
+      return;
+    }
+
+    const validFields = [
+      "name",
+      "brand",
+      "color",
+      "price",
+      "image",
+      "type",
+      "bought",
+    ];
+    const filteredProduct: Partial<IProduct> = Object.fromEntries(
+      Object.entries(updatedProduct).filter(
+        ([key, value]) => validFields.includes(key) && value !== undefined
+      )
+    );
+
+    if (Object.keys(filteredProduct).length === 0) {
+      console.warn("No valid fields to update.");
+      return;
+    }
+
+    await updateDoc(productRef, filteredProduct);
     console.log("Product updated successfully");
   } catch (error) {
     console.error("Error updating product:", error);

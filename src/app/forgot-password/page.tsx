@@ -1,17 +1,18 @@
+"use client";
 import styles from "./forgotPassword.module.css";
 import { useState } from "react";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
 import { sendEmailForResetPassword } from "@/services/resetPasswordService";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import Button from "@/components/Button";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleReset = async () => {
     if (!email.trim()) {
@@ -25,7 +26,8 @@ const ForgotPassword = () => {
       setSuccess(null);
       await sendEmailForResetPassword(email);
       setSuccess("Password reset email sent. Check your inbox.");
-      setTimeout(() => navigate("/login"), 2000);
+      setTimeout(() => router.replace("/login"), 2000);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Failed to send reset email. Please try again.");
     } finally {
@@ -43,18 +45,20 @@ const ForgotPassword = () => {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         disabled={loading}
+        className={styles.input}
       />
-
-      <Button onClick={handleReset} className={styles.btn} disabled={loading}>
-        {loading ? "Sending..." : "Send Email"}
-      </Button>
-      <Button
-        onClick={() => navigate("/login")}
-        className={styles.btn}
-        disabled={loading}
-      >
-        Back
-      </Button>
+      <div className={styles.div}>
+        <Button onClick={handleReset} className={styles.btn} disabled={loading}>
+          {loading ? "Sending..." : "Send Email"}
+        </Button>
+        <Button
+          onClick={() => router.replace("/login")}
+          className={styles.btn}
+          disabled={loading}
+        >
+          Back
+        </Button>
+      </div>
 
       {error && (
         <p className={styles.error} aria-live="polite">

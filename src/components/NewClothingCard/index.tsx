@@ -63,6 +63,7 @@ const NewClothingCard = ({ onClose }: { onClose: () => void }) => {
       await addProduct(user, { ...formData, image });
       toast.success("Product added successfully!");
       handleClose();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error("Failed to add product. Try again.");
     } finally {
@@ -228,6 +229,7 @@ const NewClothingCard = ({ onClose }: { onClose: () => void }) => {
             variant="destructive"
             onClick={handleClose}
             disabled={loading}
+            className={styles.btn_cancel}
           >
             Cancel
           </Button>

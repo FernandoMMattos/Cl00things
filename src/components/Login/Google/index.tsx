@@ -1,13 +1,14 @@
+"use client"
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SigninGoogle } from "@/services/loginService";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FcGoogle } from "react-icons/fc"; // Using react-icons for Google logo
+import { FcGoogle } from "react-icons/fc";
 import styles from "./Google.module.css";
+import { useRouter } from "next/navigation";
 
 const LoginGoogle = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
@@ -15,7 +16,8 @@ const LoginGoogle = () => {
     try {
       await SigninGoogle();
       toast.success("Login successful", { position: "bottom-left" });
-      navigate("/home");
+      router.replace("/home");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error("Login failed. Please try again.", {
         position: "bottom-left",
@@ -27,7 +29,7 @@ const LoginGoogle = () => {
 
   return (
     <Button onClick={handleClick} className={styles.btn} disabled={loading}>
-      <FcGoogle size={20} /> {/* Google icon */}
+      <FcGoogle size={20} />
       <span>{loading ? "Signing in..." : "Sign In with Google"}</span>
     </Button>
   );

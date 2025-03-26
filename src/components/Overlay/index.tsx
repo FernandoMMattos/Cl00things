@@ -14,7 +14,7 @@ import { useFilter } from "@/context/filterContext";
 import { getBrands, getColors } from "@/services/productService";
 import { Slider } from "../ui/slider";
 import { SignOutUser } from "@/services/loginService";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 const Overlay = ({
   isSidebarOpen,
@@ -23,7 +23,7 @@ const Overlay = ({
   isSidebarOpen: boolean;
   closeSidebar: () => void;
 }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [userName, setUserName] = useState<string>("Guest");
   const user = useUserID();
   const {
@@ -52,7 +52,7 @@ const Overlay = ({
 
   const SignOut = () => {
     SignOutUser();
-    navigate("/");
+    router.replace("/");
   };
 
   const fetchFilters = useCallback(async () => {

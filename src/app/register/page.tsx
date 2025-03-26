@@ -1,6 +1,7 @@
+"use client";
 import { useState } from "react";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import { useRouter } from "next/navigation";
 import { registerUser } from "@/services/registerService";
 import RegisterForm from "@/components/Register";
 
@@ -12,7 +13,7 @@ interface FormDataType {
 }
 
 const RegisterPage = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [formData, setFormData] = useState<FormDataType>({
     email: "",
     password: "",
@@ -21,12 +22,10 @@ const RegisterPage = () => {
   });
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Handles all input changes dynamically
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // 🔹 Validates form fields before submission
   const validateForm = () => {
     if (
       !formData.email ||
@@ -58,7 +57,7 @@ const RegisterPage = () => {
         formData.fname
       );
       toast.success("User created successfully!", { position: "bottom-left" });
-      navigate("/login");
+      router.replace("/");
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(error.message, { position: "bottom-left" });
@@ -69,13 +68,16 @@ const RegisterPage = () => {
   };
 
   return (
-    <RegisterForm
-      formData={formData}
-      onChange={handleChange}
-      onSubmit={handleSubmit}
-      loading={loading}
-      onNavigateToLogin={() => navigate("/login")}
-    />
+    <>
+      <RegisterForm
+        formData={formData}
+        onChange={handleChange}
+        onSubmit={handleSubmit}
+        loading={loading}
+        onNavigateToLogin={() => router.replace("/")}
+      />
+      <ToastContainer />
+    </>
   );
 };
 

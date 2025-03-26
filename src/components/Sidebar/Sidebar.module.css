@@ -31,13 +31,13 @@
   padding: 0.3rem;
   width: 100%;
   margin-top: auto;
+  cursor: pointer;
 }
 
 .sidebar_menu_btn:hover {
   background-color: var(--accent);
   border: 3px solid var(--action);
-  color: var(--black);
-}
+  color: var(--black);}
 
 .span {
   color: var(--highlight);
@@ -47,11 +47,11 @@
 }
 
 .slider {
-  background-color: var(--secondary);
   width: -webkit-fill-available;
   border-radius: 30px;
   margin-bottom: 5px;
   margin-top: 5px;
+  cursor: pointer;
 }
 
 .select_content {
@@ -68,6 +68,7 @@
   width: -webkit-fill-available;
   transition: all 0.3s ease-in-out;
   height: 3rem;
+  cursor: pointer;
 }
 
 .select_trigger:hover {

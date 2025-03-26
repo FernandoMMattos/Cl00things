@@ -15,6 +15,7 @@ const useProductForm = (userID: string | null) => {
     bought: false,
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchLastProductId = async () => {
     if (!userID) return "1";
 
@@ -25,9 +26,9 @@ const useProductForm = (userID: string | null) => {
 
       if (!querySnapshot.empty) {
         const lastProduct = querySnapshot.docs[0].data();
-        return (Number(lastProduct.id) + 1).toString(); // Ensure ID is a string
+        return (Number(lastProduct.id) + 1).toString();
       }
-      return "1"; // Start from "1"
+      return "1";
     } catch (error) {
       console.error("Error fetching last product ID:", error);
       return "1";
@@ -40,7 +41,7 @@ const useProductForm = (userID: string | null) => {
       setFormData((prevData) => ({ ...prevData, id: newId }));
     };
     initializeForm();
-  }, [userID]);
+  }, [userID, fetchLastProductId]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = event.target;

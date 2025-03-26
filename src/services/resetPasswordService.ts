@@ -6,6 +6,7 @@ export const sendEmailForResetPassword = async (email: string) => {
   try {
     await sendPasswordResetEmail(auth, email);
     console.log("Reset email sent to:", email);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.code === "auth/user-not-found") {
       console.error("Error: Email not registered");

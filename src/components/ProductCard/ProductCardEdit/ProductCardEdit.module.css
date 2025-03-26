@@ -7,17 +7,16 @@
   z-index: 1000;
   position: absolute;
   place-self: anchor-center;
-  width: max-content;
   width: 500px;
-  text-align: -webkit-center;
+  align-items: center;
 }
 
 .card_header {
   display: flex;
+  width: 100%;
+  justify-content: space-around;
+  height: 2rem;
   align-items: center;
-  justify-content: space-between;
-  flex-direction: row;
-  
 }
 
 .card_title {
@@ -31,7 +30,6 @@
   gap: 1rem;
   align-items: center;
   width: min-content;
-
 }
 
 .img {
@@ -56,6 +54,10 @@
   background-color: var(--primary);
   height: 2.5rem;
   width: 15rem;
+}
+
+.select_trigger {
+  cursor: pointer;
 }
 
 .input:focus,
@@ -86,8 +88,8 @@
 }
 
 .icon {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   cursor: pointer;
 }
 
@@ -98,6 +100,24 @@
 
 .checkbox {
   color: var(--highlight);
+  cursor: pointer;
+}
+
+.btn {
+  border: 2px solid var(--secondary);
+  width: 100px;
+  height: 45px;
+  background-color: var(--primary);
+  font-weight: bold;
+  color: var(--highlight);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.btn:hover {
+  border: 2px solid var(--action);
+  background-color: var(--primary);
 }
 
 .select_content {

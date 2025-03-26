@@ -57,6 +57,8 @@
   box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease-in-out;
   height: 3rem;
+  width: 100%;
+  cursor: pointer;
 }
 
 .select_content {
@@ -65,6 +67,12 @@
 
 .btn {
   border: 3px solid white;
+  cursor: pointer;
+}
+
+.btn_cancel {
+  cursor: pointer;
+
 }
 
 .btn:hover {
