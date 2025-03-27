@@ -18,8 +18,8 @@ export type IProduct = {
     | "Magenta"
     | "Gold"
     | "";
-  price: number;
+  price: string;
   image: string;
-  type: "head" | "body" | "legs" | "feet" | "accessory" | "not_created";
+  type: "head" | "body" | "legs" | "feet" | "accessory" | "";
   bought: boolean;
 };

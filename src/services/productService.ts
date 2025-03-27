@@ -20,19 +20,18 @@ const addProduct = async (userId: string, newProduct: IProduct) => {
     console.error("Error: Missing userId or product ID.");
     return;
   }
+  const formattedProduct = {
+    ...newProduct,
+    id: String(newProduct.id) || "1",
+    name: capitalizeFirstLetter(newProduct.name),
+    brand: capitalizeFirstLetter(newProduct.brand),
+    color: newProduct.color,
+    image: newProduct.image,
+  };
+
+  const productRef = doc(db, `users/${userId}/products`, formattedProduct.id);
 
   try {
-    const formattedProduct = {
-      ...newProduct,
-      id: newProduct.id?.toString() || "1",
-      name: capitalizeFirstLetter(newProduct.name),
-      brand: capitalizeFirstLetter(newProduct.brand),
-      color: newProduct.color,
-      image: newProduct.image,
-    };
-
-    const productId = String(newProduct.id);
-    const productRef = doc(db, `users/${userId}/products`, productId);
     await setDoc(productRef, formattedProduct);
   } catch (error) {
     console.error("❌ Error adding product:", error);

@@ -3,7 +3,6 @@ import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Button } from "../ui/button";
 import ProductCardEdit from "./ProductCardEdit";
 import { IProduct } from "@/types/IProduct";
-import BackgroundBlur from "../BackgroundBlur";
 import styles from "./ProductCard.module.css";
 
 const BoughtStatus = ({ bought }: { bought: boolean }) => (
@@ -48,17 +47,10 @@ const ProductCard = ({
   return (
     <>
       {isActive ? (
-        <section>
-          <BackgroundBlur
-            active={isActive}
-            onClick={handleClose}
-            blurFor="editProduct"
-          />
-          <ProductCardEdit product={product} onClose={handleClose} />
-        </section>
+        <ProductCardEdit product={product} onClose={handleClose} />
       ) : (
         <Card className={styles.card}>
-          <img src={product.image} alt={product.name} className={styles.img}/>
+          <img src={product.image} alt={product.name} className={styles.img} />
           <CardContent>
             <CardTitle className={styles.card_title}>{product.name}</CardTitle>
             <h3 className={styles.h3}>{product.brand}</h3>

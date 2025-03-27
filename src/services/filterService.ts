@@ -25,7 +25,7 @@ const filterByPrice = (
   max: number
 ): IProduct[] => {
   return products.filter(
-    (product) => product.price >= min && product.price <= max
+    (product) => Number(product.price) >= min && Number(product.price) <= max
   );
 };
 
@@ -49,7 +49,7 @@ const filterProducts = (
     )
     .filter((product) => !selectedBrand || product.brand === selectedBrand)
     .filter((product) => !selectedColor || product.color === selectedColor)
-    .filter((product) => product.price <= selectedPrice);
+    .filter((product) => Number(product.price) <= selectedPrice);
 };
 
 export {

@@ -9,9 +9,9 @@ const useProductForm = (userID: string | null) => {
     name: "",
     brand: "",
     color: "",
-    price: 0,
+    price: "",
     image: "",
-    type: "not_created",
+    type: "",
     bought: false,
   });
 
@@ -66,9 +66,9 @@ const useProductForm = (userID: string | null) => {
       name: "",
       brand: "",
       color: "",
-      price: 0,
+      price: "",
       image: "",
-      type: "not_created",
+      type: "",
       bought: false,
     });
   };

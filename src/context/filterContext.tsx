@@ -33,7 +33,7 @@ export const FilterProvider = ({
         return (
           matchesFilter(selectedBrand, product.brand) &&
           matchesFilter(selectedColor, product.color) &&
-          product.price <= selectedPrice
+          Number(product.price) <= selectedPrice
         );
       });
     },
