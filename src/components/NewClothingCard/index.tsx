@@ -59,11 +59,8 @@ const NewClothingCard = ({ onClose }: { onClose: () => void }) => {
 
     try {
       setLoading(true);
-      alert("antes do saveImage");
       await saveImage();
-      alert("antes do saveProduct");
       await addProduct(user, { ...formData, image });
-      alert("depois do saveProduct");
       toast.success("Product added successfully!");
       handleClose();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
