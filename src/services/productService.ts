@@ -16,12 +16,10 @@ const capitalizeFirstLetter = (text: string) => {
 };
 
 const addProduct = async (userId: string, newProduct: IProduct) => {
-  alert("antes do if");
   if (!userId || !newProduct.id) {
     console.error("Error: Missing userId or product ID.");
     return;
   }
-  alert("depois do if");
   const formattedProduct = {
     ...newProduct,
     id: String(newProduct.id) || "1",
@@ -30,13 +28,11 @@ const addProduct = async (userId: string, newProduct: IProduct) => {
     color: newProduct.color,
     image: newProduct.image,
   };
-  alert("depois do formattedProduct");
+
   const productRef = doc(db, `users/${userId}/products`, formattedProduct.id);
-  alert("depois do productRef");
+
   try {
-    alert("antes do setDoc");
     await setDoc(productRef, formattedProduct);
-    alert("depois do setDoc");
   } catch (error) {
     alert(error);
     console.error("❌ Error adding product:", error);
