@@ -55,7 +55,7 @@ const LoginForm = ({ formData, onChange, onSubmit }: LoginFormProps) => {
           value={formData.password}
           onChange={onChange}
           required
-          autoComplete="current-password"
+          autoComplete=""
         />
 
         <button
