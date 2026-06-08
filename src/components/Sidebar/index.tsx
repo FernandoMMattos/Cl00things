@@ -1,5 +1,3 @@
-import { SignOutUser } from "@/services/loginService";
-import { useEffect, useState, useCallback } from "react";
 import { Slider } from "../ui/slider";
 import {
   Select,
@@ -8,9 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import useUserID from "@/hooks/useUserID";
-import getUserName from "@/services/userService";
-import { getBrands, getColors } from "@/services/productService";
 import { useFilter } from "@/context/filterContext";
 import styles from "./Sidebar.module.css";
 import { Separator } from "../ui/separator";
@@ -23,12 +18,11 @@ import {
   SidebarHeader,
 } from "../ui/sidebar";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { useRouter } from "next/navigation";
+import useFilterData from "@/hooks/useFilterData";
 
 const AppSidebar = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
-  const router = useRouter();
-  const user = useUserID();
   const isMobile = useIsMobile();
+  const { userName, colors, brands, handleSignOut } = useFilterData();
   const {
     setSelectedBrand,
     setSelectedColor,
@@ -37,45 +31,6 @@ const AppSidebar = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
     selectedColor,
     setSelectedPrice,
   } = useFilter();
-  const [userName, setUserName] = useState<string>("Guest");
-  const [colors, setColors] = useState<string[]>([]);
-  const [brands, setBrands] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchUserName = async () => {
-      if (!user) return;
-      try {
-        const name = await getUserName(user);
-        setUserName(name || "Guest");
-      } catch (error) {
-        console.error("Error fetching user name:", error);
-      }
-    };
-    fetchUserName();
-  }, [user]);
-
-  const fetchFilters = useCallback(async () => {
-    if (!user) return;
-    try {
-      const [fetchedColors, fetchedBrands] = await Promise.all([
-        getColors(user),
-        getBrands(user),
-      ]);
-      setColors((prev) => (prev.length ? prev : ["None", ...fetchedColors]));
-      setBrands((prev) => (prev.length ? prev : ["None", ...fetchedBrands]));
-    } catch (error) {
-      console.error("Error fetching filters:", error);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    fetchFilters();
-  }, [fetchFilters]);
-
-  const SignOut = () => {
-    SignOutUser();
-    router.replace("/");
-  };
 
   return (
     <Sidebar
@@ -152,7 +107,7 @@ const AppSidebar = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
       </SidebarContent>
 
       <SidebarFooter className={styles.bg}>
-        <button onClick={SignOut} className={styles.sidebar_menu_btn}>
+        <button onClick={handleSignOut} className={styles.sidebar_menu_btn}>
           Sign out
         </button>
       </SidebarFooter>

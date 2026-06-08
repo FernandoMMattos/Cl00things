@@ -1,77 +1,36 @@
 import { IProduct } from "@/types/IProduct";
-import { useState, useEffect } from "react";
-import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
-import { db } from "@/firebaseConfig";
+import { useState, useCallback } from "react";
 
-const useProductForm = (userID: string | null) => {
-  const [formData, setFormData] = useState<IProduct>({
-    id: "0",
-    name: "",
-    brand: "",
-    color: "",
-    price: "",
-    image: "",
-    type: "",
-    bought: false,
-  });
+type ProductFormData = Omit<IProduct, "id">;
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const fetchLastProductId = async () => {
-    if (!userID) return "1";
+const initialFormData: ProductFormData = {
+  name: "",
+  brand: "",
+  color: "",
+  price: 0,
+  image: "",
+  type: "",
+  bought: false,
+};
 
-    try {
-      const productsRef = collection(db, `users/${userID}/products`);
-      const q = query(productsRef, orderBy("id", "desc"), limit(1));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const lastProduct = querySnapshot.docs[0].data();
-        return (Number(lastProduct.id) + 1).toString();
-      }
-      return "1";
-    } catch (error) {
-      console.error("Error fetching last product ID:", error);
-      return "1";
-    }
-  };
-
-  useEffect(() => {
-    const initializeForm = async () => {
-      const newId = (await fetchLastProductId()) ?? 1;
-      setFormData((prevData) => ({ ...prevData, id: newId }));
-    };
-    initializeForm();
-  }, [userID, fetchLastProductId]);
+const useProductForm = () => {
+  const [formData, setFormData] = useState<ProductFormData>(initialFormData);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = event.target;
-    
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: type === "number" ? Number(value) || 0 : value,
     }));
   };
 
-  const handleSelectChange = (field: keyof IProduct, value: string) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [field]: value,
-    }));
+  const handleSelectChange = (field: keyof ProductFormData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const resetForm = async () => {
-    const newId = (await fetchLastProductId()) ?? 1;
-    setFormData({
-      id: newId,
-      name: "",
-      brand: "",
-      color: "",
-      price: "",
-      image: "",
-      type: "",
-      bought: false,
-    });
-  };
+  const resetForm = useCallback(() => {
+    setFormData(initialFormData);
+  }, []);
 
   return {
     formData,

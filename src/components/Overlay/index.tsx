@@ -1,7 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
 import styles from "./Overlay.module.css";
-import getUserName from "@/services/userService";
-import useUserID from "@/hooks/useUserID";
 import { Separator } from "../ui/separator";
 import {
   Select,
@@ -11,10 +8,8 @@ import {
   SelectValue,
 } from "../ui/select";
 import { useFilter } from "@/context/filterContext";
-import { getBrands, getColors } from "@/services/productService";
 import { Slider } from "../ui/slider";
-import { SignOutUser } from "@/services/loginService";
-import { useRouter } from "next/navigation";
+import useFilterData from "@/hooks/useFilterData";
 
 const Overlay = ({
   isSidebarOpen,
@@ -23,9 +18,7 @@ const Overlay = ({
   isSidebarOpen: boolean;
   closeSidebar: () => void;
 }) => {
-  const router = useRouter();
-  const [userName, setUserName] = useState<string>("Guest");
-  const user = useUserID();
+  const { userName, colors, brands, handleSignOut } = useFilterData();
   const {
     setSelectedBrand,
     setSelectedColor,
@@ -34,44 +27,6 @@ const Overlay = ({
     selectedColor,
     setSelectedPrice,
   } = useFilter();
-  const [colors, setColors] = useState<string[]>([]);
-  const [brands, setBrands] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchUserName = async () => {
-      if (!user) return;
-      try {
-        const name = await getUserName(user);
-        setUserName(name || "Guest");
-      } catch (error) {
-        console.error("Error fetching user name:", error);
-      }
-    };
-    fetchUserName();
-  }, [user]);
-
-  const SignOut = () => {
-    SignOutUser();
-    router.replace("/");
-  };
-
-  const fetchFilters = useCallback(async () => {
-    if (!user) return;
-    try {
-      const [fetchedColors, fetchedBrands] = await Promise.all([
-        getColors(user),
-        getBrands(user),
-      ]);
-      setColors((prev) => (prev.length ? prev : ["None", ...fetchedColors]));
-      setBrands((prev) => (prev.length ? prev : ["None", ...fetchedBrands]));
-    } catch (error) {
-      console.error("Error fetching filters:", error);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    fetchFilters();
-  }, [fetchFilters]);
 
   return (
     <div className={`${styles.overlay} ${isSidebarOpen ? styles.show : ""}`}>
@@ -148,7 +103,7 @@ const Overlay = ({
       </div>
 
       <div>
-        <button onClick={SignOut} className={styles.logout}>
+        <button onClick={handleSignOut} className={styles.logout}>
           Sign out
         </button>
       </div>

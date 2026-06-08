@@ -1,7 +1,7 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
+import Image from "next/image";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Button } from "../ui/button";
-import ProductCardEdit from "./ProductCardEdit";
 import { IProduct } from "@/types/IProduct";
 import styles from "./ProductCard.module.css";
 
@@ -33,42 +33,37 @@ const ProductCard = ({
   product: IProduct;
   setEditingProduct: (product: IProduct | null) => void;
 }) => {
-  const [isActive, setIsActive] = useState(false);
-
   const handleEdit = useCallback(() => {
     setEditingProduct(product);
   }, [product, setEditingProduct]);
 
-  const handleClose = useCallback(() => {
-    setIsActive(false);
-    setTimeout(() => setEditingProduct(null), 300);
-  }, [setEditingProduct]);
-
   return (
-    <>
-      {isActive ? (
-        <ProductCardEdit product={product} onClose={handleClose} />
-      ) : (
-        <Card className={styles.card}>
-          <img src={product.image} alt={product.name} className={styles.img} />
-          <CardContent>
-            <CardTitle className={styles.card_title}>{product.name}</CardTitle>
-            <h3 className={styles.h3}>{product.brand}</h3>
-            <h3 className={styles.h3}>€{product.price}</h3>
-            <BoughtStatus bought={product.bought} />
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button
-              variant="outline"
-              onClick={handleEdit}
-              className={styles.btn}
-            >
-              Edit
-            </Button>
-          </CardFooter>
-        </Card>
-      )}
-    </>
+    <Card className={styles.card}>
+      <div className={styles.img_wrapper}>
+        <Image
+          src={product.image || "/placeholder-image.png"}
+          alt={product.name}
+          fill
+          className={styles.img}
+          sizes="(max-width: 768px) 100vw, 25vw"
+        />
+      </div>
+      <CardContent>
+        <CardTitle className={styles.card_title}>{product.name}</CardTitle>
+        <h3 className={styles.h3}>{product.brand}</h3>
+        <h3 className={styles.h3}>€{product.price}</h3>
+        <BoughtStatus bought={product.bought} />
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <Button
+          variant="outline"
+          onClick={handleEdit}
+          className={styles.btn}
+        >
+          Edit
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 

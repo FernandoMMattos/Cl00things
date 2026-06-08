@@ -1,18 +1,18 @@
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "@/firebaseConfig";
 
 export const sendEmailForResetPassword = async (email: string) => {
-  const auth = getAuth();
-
   try {
     await sendPasswordResetEmail(auth, email);
-    console.log("Reset email sent to:", email);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    if (error.code === "auth/user-not-found") {
-      console.error("Error: Email not registered");
+  } catch (error: unknown) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code: string }).code === "auth/user-not-found"
+    ) {
       throw new Error("Email not registered");
     }
-    console.error("Error sending reset email:", error.message);
     throw error;
   }
 };

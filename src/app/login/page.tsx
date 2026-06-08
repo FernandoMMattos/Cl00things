@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { SignInUser } from "@/services/loginService";
@@ -15,7 +16,6 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       await SignInUser(email, password);
-      console.log("User logged in");
       router.replace("/home");
       toast.success("User logged in", { position: "bottom-left" });
     } catch (error: unknown) {

@@ -1,6 +1,6 @@
-import { getFirestore } from "firebase/firestore";
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
+import { Auth, getAuth } from "firebase/auth";
+import { Firestore, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -13,8 +13,16 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-const app = initializeApp(firebaseConfig);
+// Firebase validates the API key at initialization time.
+// Env vars are not available during Next.js build/SSR, so we must guard against
+// server-side initialization. All Firebase usage in this app is client-only
+// (inside useEffect / event handlers), so the stubs are never actually called.
+const isClient = typeof window !== "undefined";
 
-export const auth = getAuth();
-export const db = getFirestore(app);
+const app: FirebaseApp = isClient
+  ? (getApps().length > 0 ? getApp() : initializeApp(firebaseConfig))
+  : ({} as FirebaseApp);
+
+export const auth: Auth = isClient ? getAuth(app) : ({} as Auth);
+export const db: Firestore = isClient ? getFirestore(app) : ({} as Firestore);
 export default app;

@@ -1,3 +1,5 @@
+import { useState } from "react";
+import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -19,6 +21,7 @@ import Button from "@/components/Button";
 import useProductEdit from "@/hooks/useProductEdit";
 import styles from "./ProductCardEdit.module.css";
 import { IProduct } from "@/types/IProduct";
+import { PRODUCT_COLORS } from "@/constants/product";
 
 const ProductCardEdit = ({
   product,
@@ -36,30 +39,48 @@ const ProductCardEdit = ({
     handleSave,
     handleDelete,
     handleToggleBought,
-    handleImageUpload,
     handleImageUrlChange,
-    useIsMobile,
   } = useProductEdit(product, onClose);
 
-  const isMobile = useIsMobile();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const handleConfirmDelete = async () => {
+    await handleDelete();
+    onClose();
+  };
 
   return (
     <Card onClick={(e) => e.stopPropagation()} className={styles.card}>
       <CardHeader className={styles.card_header}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 448 512"
-          onClick={() => {
-            handleDelete();
-            onClose();
-          }}
-          className={styles.icon}
-        >
-          <path
-            fill="black"
-            d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z"
-          />
-        </svg>
+        {confirmDelete ? (
+          <div className={styles.delete_confirm}>
+            <span>Delete this product?</span>
+            <button
+              className={styles.confirm_yes}
+              onClick={handleConfirmDelete}
+            >
+              Yes
+            </button>
+            <button
+              className={styles.confirm_no}
+              onClick={() => setConfirmDelete(false)}
+            >
+              No
+            </button>
+          </div>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 448 512"
+            onClick={() => setConfirmDelete(true)}
+            className={styles.icon}
+          >
+            <path
+              fill="black"
+              d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z"
+            />
+          </svg>
+        )}
         <CardTitle className={styles.card_title}>Edit Product</CardTitle>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -71,11 +92,15 @@ const ProductCardEdit = ({
         </svg>
       </CardHeader>
       <CardContent className={styles.card_content}>
-        <img
-          src={image || "/placeholder-image.png"}
-          className={styles.img}
-          alt=""
-        />
+        <div className={styles.img_wrapper}>
+          <Image
+            src={image || "/placeholder-image.png"}
+            alt={product.name}
+            fill
+            className={styles.img}
+            sizes="(max-width: 768px) 100vw, 400px"
+          />
+        </div>
 
         <div className={styles.field}>
           <Label className={styles.label}>Name</Label>
@@ -114,22 +139,7 @@ const ProductCardEdit = ({
               />
             </SelectTrigger>
             <SelectContent className={styles.select_content}>
-              {[
-                "Black",
-                "Blue",
-                "Red",
-                "Purple",
-                "Pink",
-                "Gray",
-                "White",
-                "Yellow",
-                "Brown",
-                "Silver",
-                "Green",
-                "Orange",
-                "Magenta",
-                "Gold",
-              ].map((color) => (
+              {PRODUCT_COLORS.map((color) => (
                 <SelectItem
                   key={color}
                   value={color}
@@ -153,33 +163,17 @@ const ProductCardEdit = ({
           />
         </div>
 
-        {isMobile ? (
-          <div className={styles.field}>
-            <Label htmlFor="image" className={styles.label}>
-              Image
-            </Label>
-            <Input
-              id="image"
-              name="image"
-              onChange={handleImageUpload}
-              accept="image/*"
-              type="file"
-              className={styles.input}
-            />
-          </div>
-        ) : (
-          <div className={styles.field}>
-            <Label className={styles.label}>Image URL</Label>
-            <Input
-              name="image"
-              value={image ?? ""}
-              onChange={handleImageUrlChange}
-              placeholder="Enter image URL"
-              type="text"
-              className={styles.input}
-            />
-          </div>
-        )}
+        <div className={styles.field}>
+          <Label className={styles.label}>Image URL</Label>
+          <Input
+            name="image"
+            value={image ?? ""}
+            onChange={handleImageUrlChange}
+            placeholder="Enter image URL"
+            type="text"
+            className={styles.input}
+          />
+        </div>
       </CardContent>
       <CardFooter className={styles.card_footer}>
         <div className={styles.div}>
@@ -190,7 +184,9 @@ const ProductCardEdit = ({
             className={styles.checkbox}
           />
         </div>
-        <Button onClick={handleSave} className={styles.btn}>Save</Button>
+        <Button onClick={handleSave} className={styles.btn}>
+          Save
+        </Button>
       </CardFooter>
     </Card>
   );

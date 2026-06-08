@@ -1,6 +1,6 @@
 import { Input } from "../ui/input";
 import styles from "./SearchBar.module.css";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface SearchBarProps {
   setSearchTerm: (value: string) => void;
@@ -8,15 +8,24 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ setSearchTerm }) => {
   const [searchValue, setSearchValue] = useState("");
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleSearch = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
       setSearchValue(value);
-      setTimeout(() => setSearchTerm(value), 300);
+
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => setSearchTerm(value), 300);
     },
     [setSearchTerm]
   );
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   return (
     <div className={styles.searchBar}>

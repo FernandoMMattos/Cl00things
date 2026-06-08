@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { getProducts } from "@/services/productService";
 import { filterProducts } from "@/services/filterService";
 import { IProduct } from "@/types/IProduct";
@@ -13,13 +13,18 @@ const validTypes = ["head", "body", "legs", "feet", "accessory"] as const;
 
 const Body = ({ searchTerm }: { searchTerm: string }) => {
   const [products, setProducts] = useState<IProduct[]>([]);
-  const user = useUserID();
+  const { userId } = useUserID();
   const { selectedBrand, selectedColor, selectedPrice } = useFilter();
   const [editingProduct, setEditingProduct] = useState<IProduct | null>(null);
 
+  const handleSetEditingProduct = useCallback(
+    (product: IProduct | null) => setEditingProduct(product),
+    []
+  );
+
   useEffect(() => {
-    if (!user) return;
-    const unsubscribe = getProducts(user, (newProducts) => {
+    if (!userId) return;
+    const unsubscribe = getProducts(userId, (newProducts) => {
       setProducts((prev) =>
         JSON.stringify(prev) === JSON.stringify(newProducts)
           ? prev
@@ -27,7 +32,7 @@ const Body = ({ searchTerm }: { searchTerm: string }) => {
       );
     });
     return () => unsubscribe?.();
-  }, [user]);
+  }, [userId]);
 
   const categorizedProducts = useMemo(() => {
     const filteredProducts = filterProducts(
@@ -53,7 +58,7 @@ const Body = ({ searchTerm }: { searchTerm: string }) => {
           key={category.title}
           title={category.title}
           products={category.products}
-          setEditingProduct={setEditingProduct}
+          setEditingProduct={handleSetEditingProduct}
         />
       ))}
 

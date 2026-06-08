@@ -5,37 +5,55 @@ import {
   updateDoc,
   deleteDoc,
   onSnapshot,
-  setDoc,
+  addDoc,
   getDocs,
   getDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import { toast } from "react-toastify";
 
-const capitalizeFirstLetter = (text: string) => {
-  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+const capitalizeWords = (text: string) =>
+  text
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+
+const getDistinctFieldValues = async (
+  userId: string | undefined,
+  field: keyof IProduct
+): Promise<string[]> => {
+  if (!userId) return [];
+  try {
+    const snapshot = await getDocs(collection(db, `users/${userId}/products`));
+    const valueSet = new Set<string>();
+    snapshot.docs.forEach((doc) => {
+      const value = doc.data()[field];
+      if (value) valueSet.add(value as string);
+    });
+    return Array.from(valueSet);
+  } catch (error) {
+    console.error(`Error fetching ${field}s:`, error);
+    return [];
+  }
 };
 
-const addProduct = async (userId: string, newProduct: IProduct) => {
-  if (!userId || !newProduct.id) {
-    console.error("Error: Missing userId or product ID.");
+const addProduct = async (userId: string, product: Omit<IProduct, "id">) => {
+  if (!userId) {
+    toast.error("You must be logged in to add a product.");
     return;
   }
-  const formattedProduct = {
-    ...newProduct,
-    id: String(newProduct.id) || "1",
-    name: capitalizeFirstLetter(newProduct.name),
-    brand: capitalizeFirstLetter(newProduct.brand),
-    color: newProduct.color,
-    image: newProduct.image,
-  };
-
-  const productRef = doc(db, `users/${userId}/products`, formattedProduct.id);
 
   try {
-    await setDoc(productRef, formattedProduct);
+    await addDoc(collection(db, `users/${userId}/products`), {
+      ...product,
+      name: capitalizeWords(product.name),
+      brand: capitalizeWords(product.brand),
+      createdAt: serverTimestamp(),
+    });
   } catch (error) {
-    alert(error);
-    console.error("❌ Error adding product:", error);
+    toast.error("Failed to add product. Please try again.");
+    console.error("Error adding product:", error);
   }
 };
 
@@ -44,21 +62,21 @@ const updateProduct = async (
   productId: string,
   updatedProduct: Partial<IProduct>
 ) => {
-  try {
-    if (typeof userId !== "string" || typeof productId !== "string") {
-      console.log("Invalid userId or productId:", userId, productId);
-      return;
-    }
+  if (!userId || !productId) {
+    console.error("updateProduct: missing userId or productId");
+    return;
+  }
 
+  try {
     const productRef = doc(db, "users", userId, "products", productId);
     const productSnapshot = await getDoc(productRef);
 
     if (!productSnapshot.exists()) {
-      console.log(`Error: Product with ID ${productId} does not exist.`);
+      console.error(`updateProduct: product ${productId} does not exist`);
       return;
     }
 
-    const validFields = [
+    const validFields: (keyof IProduct)[] = [
       "name",
       "brand",
       "color",
@@ -69,31 +87,26 @@ const updateProduct = async (
     ];
     const filteredProduct: Partial<IProduct> = Object.fromEntries(
       Object.entries(updatedProduct).filter(
-        ([key, value]) => validFields.includes(key) && value !== undefined
+        ([key, value]) =>
+          validFields.includes(key as keyof IProduct) && value !== undefined
       )
     );
 
     if (Object.keys(filteredProduct).length === 0) {
-      console.warn("No valid fields to update.");
+      console.warn("updateProduct: no valid fields to update");
       return;
     }
 
     await updateDoc(productRef, filteredProduct);
-    console.log("Product updated successfully");
   } catch (error) {
     console.error("Error updating product:", error);
   }
 };
 
-const deleteProduct = async (userId: string, productId: number) => {
+const deleteProduct = async (userId: string, productId: string) => {
   try {
-    const productRef = doc(
-      db,
-      `users/${userId}/products`,
-      productId.toString()
-    );
+    const productRef = doc(db, `users/${userId}/products`, productId);
     await deleteDoc(productRef);
-    console.log("Product deleted successfully");
   } catch (error) {
     console.error("Error deleting product:", error);
   }
@@ -109,61 +122,29 @@ const getProducts = (
 
   const unsubscribe = onSnapshot(productsRef, (snapshot) => {
     const products: IProduct[] = snapshot.docs.map((doc) => {
-      const data = doc.data() as Omit<IProduct, "id">;
-      return { id: doc.id, ...data };
+      const data = doc.data();
+      return {
+        id: doc.id,
+        name: data.name ?? "",
+        brand: data.brand ?? "",
+        color: data.color ?? "",
+        price: Number(data.price) || 0,
+        image: data.image ?? "",
+        type: data.type ?? "",
+        bought: data.bought ?? false,
+      } as IProduct;
     });
-
     setProducts(products);
   });
 
   return unsubscribe;
 };
 
-const getColors = async (userId?: string): Promise<string[]> => {
-  if (!userId) {
-    console.error("Error fetching colors: userId is undefined");
-    return [];
-  }
+const getColors = (userId?: string) =>
+  getDistinctFieldValues(userId, "color");
 
-  try {
-    const productsCollection = collection(db, `users/${userId}/products`);
-    const productsSnapshot = await getDocs(productsCollection);
-
-    const colorSet = new Set<string>();
-    productsSnapshot.docs.forEach((doc) => {
-      const data = doc.data();
-      if (data.color) colorSet.add(data.color);
-    });
-
-    return Array.from(colorSet);
-  } catch (error) {
-    console.error("Error fetching colors:", error);
-    return [];
-  }
-};
-
-const getBrands = async (userId?: string): Promise<string[]> => {
-  if (!userId) {
-    console.error("Error fetching brands: userId is undefined");
-    return [];
-  }
-
-  try {
-    const productsCollection = collection(db, `users/${userId}/products`);
-    const productsSnapshot = await getDocs(productsCollection);
-
-    const brandSet = new Set<string>();
-    productsSnapshot.docs.forEach((doc) => {
-      const data = doc.data();
-      if (data.brand) brandSet.add(data.brand);
-    });
-
-    return Array.from(brandSet);
-  } catch (error) {
-    console.error("Error fetching brands:", error);
-    return [];
-  }
-};
+const getBrands = (userId?: string) =>
+  getDistinctFieldValues(userId, "brand");
 
 export {
   addProduct,

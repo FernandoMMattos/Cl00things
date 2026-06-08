@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import styles from "./forgotPassword.module.css";
 import { useState } from "react";
 import { sendEmailForResetPassword } from "@/services/resetPasswordService";
@@ -27,8 +28,7 @@ const ForgotPassword = () => {
       await sendEmailForResetPassword(email);
       setSuccess("Password reset email sent. Check your inbox.");
       setTimeout(() => router.replace("/login"), 2000);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    } catch {
       setError("Failed to send reset email. Please try again.");
     } finally {
       setLoading(false);

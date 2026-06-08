@@ -27,7 +27,6 @@ export const registerUser = async (
       createdAt: new Date().toISOString(),
     });
 
-    console.log("User created:", user);
   } catch (error: unknown) {
     if (error instanceof FirebaseError) {
       console.error("Firebase Error:", error.code, error.message);

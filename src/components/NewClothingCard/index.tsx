@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Card,
   CardContent,
@@ -22,23 +22,14 @@ import useUserID from "@/hooks/useUserID";
 import styles from "./NewClothingCard.module.css";
 import useProductImage from "@/hooks/useImageProduct";
 import { toast } from "react-toastify";
+import { PRODUCT_COLORS, PRODUCT_TYPES } from "@/constants/product";
 
 const NewClothingCard = ({ onClose }: { onClose: () => void }) => {
-  const user = useUserID();
+  const { userId: user } = useUserID();
   const { formData, handleChange, handleSelectChange, resetForm } =
-    useProductForm(user);
-  const { image, handleImageUpload, handleImageUrlChange, saveImage } =
-    useProductImage(user, Number(formData.id), formData.image);
-  const [isMobile, setIsMobile] = useState(false);
+    useProductForm();
+  const { image, handleImageUrlChange } = useProductImage(user, "");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const checkIfMobile = () =>
-      setIsMobile(/Mobi|Android/i.test(navigator.userAgent));
-    checkIfMobile();
-    window.addEventListener("resize", checkIfMobile);
-    return () => window.removeEventListener("resize", checkIfMobile);
-  }, []);
 
   const handleClose = useCallback(() => {
     resetForm();
@@ -59,12 +50,10 @@ const NewClothingCard = ({ onClose }: { onClose: () => void }) => {
 
     try {
       setLoading(true);
-      await saveImage();
       await addProduct(user, { ...formData, image });
       toast.success("Product added successfully!");
       handleClose();
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
+    } catch {
       toast.error("Failed to add product. Try again.");
     } finally {
       setLoading(false);
@@ -119,22 +108,7 @@ const NewClothingCard = ({ onClose }: { onClose: () => void }) => {
                   />
                 </SelectTrigger>
                 <SelectContent className={styles.select_content}>
-                  {[
-                    "Black",
-                    "Blue",
-                    "Red",
-                    "Purple",
-                    "Pink",
-                    "Gray",
-                    "White",
-                    "Yellow",
-                    "Brown",
-                    "Silver",
-                    "Green",
-                    "Orange",
-                    "Magenta",
-                    "Gold",
-                  ].map((color) => (
+                  {PRODUCT_COLORS.map((color) => (
                     <SelectItem
                       key={color}
                       value={color}
@@ -155,36 +129,23 @@ const NewClothingCard = ({ onClose }: { onClose: () => void }) => {
                 name="price"
                 type="number"
                 placeholder="How much does it cost?"
-                value={formData.price}
+                value={formData.price || ""}
                 onChange={handleChange}
                 className={styles.input}
               />
 
               <Label htmlFor="image" className={styles.label}>
-                Image
+                Image URL
               </Label>
-              {isMobile ? (
-                <>
-                  <Input
-                    id="image"
-                    name="image"
-                    onChange={handleImageUpload}
-                    accept="image/*"
-                    type="file"
-                    className={styles.input}
-                  />
-                </>
-              ) : (
-                <Input
-                  id="image"
-                  name="image"
-                  value={image}
-                  placeholder="Enter image URL"
-                  onChange={handleImageUrlChange}
-                  type="text"
-                  className={styles.input}
-                />
-              )}
+              <Input
+                id="image"
+                name="image"
+                value={image}
+                placeholder="Enter image URL"
+                onChange={handleImageUrlChange}
+                type="text"
+                className={styles.input}
+              />
             </div>
 
             <div className="flex flex-col space-y-1.5">
@@ -199,21 +160,15 @@ const NewClothingCard = ({ onClose }: { onClose: () => void }) => {
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent className={styles.select_content}>
-                  <SelectItem value="head" className={styles.select_item}>
-                    Head
-                  </SelectItem>
-                  <SelectItem value="body" className={styles.select_item}>
-                    Body
-                  </SelectItem>
-                  <SelectItem value="legs" className={styles.select_item}>
-                    Legs
-                  </SelectItem>
-                  <SelectItem value="feet" className={styles.select_item}>
-                    Feet
-                  </SelectItem>
-                  <SelectItem value="accessory" className={styles.select_item}>
-                    Accessory
-                  </SelectItem>
+                  {PRODUCT_TYPES.map(({ value, label }) => (
+                    <SelectItem
+                      key={value}
+                      value={value}
+                      className={styles.select_item}
+                    >
+                      {label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

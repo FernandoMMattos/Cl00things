@@ -18,7 +18,7 @@ export type IProduct = {
     | "Magenta"
     | "Gold"
     | "";
-  price: string;
+  price: number;
   image: string;
   type: "head" | "body" | "legs" | "feet" | "accessory" | "";
   bought: boolean;

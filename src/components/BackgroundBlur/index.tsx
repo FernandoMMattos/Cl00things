@@ -1,6 +1,6 @@
 import React from "react";
+import { clsx } from "clsx";
 import styles from "./BackgroundBlur.module.css";
-import classNames from "classnames";
 
 interface BlurBackgroundProps {
   active: boolean;
@@ -15,7 +15,7 @@ const BackgroundBlur = ({
 }: BlurBackgroundProps) => {
   return (
     <div
-      className={classNames(styles.background_blur, {
+      className={clsx(styles.background_blur, {
         [styles.active]: active,
         [styles[blurFor]]: blurFor,
       })}

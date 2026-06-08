@@ -34,12 +34,47 @@
   width: min-content;
 }
 
+.img_wrapper {
+  position: relative;
+  width: 300px;
+  height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 .img {
-  width: 100%;
-  max-width: 300px;
-  height: auto;
+  object-fit: cover;
   border-radius: 8px;
   user-select: none;
+}
+
+.delete_confirm {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--highlight);
+}
+
+.confirm_yes,
+.confirm_no {
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: 1px solid;
+}
+
+.confirm_yes {
+  background: #ca1c1c;
+  color: white;
+  border-color: #ca1c1c;
+}
+
+.confirm_no {
+  background: transparent;
+  color: var(--highlight);
+  border-color: var(--secondary);
 }
 
 .label {
@@ -142,8 +177,9 @@
     font-size: 1.3rem;
   }
 
-  .img {
-    max-width: 220px;
+  .img_wrapper {
+    width: 220px;
+    height: 160px;
   }
 
   .input,
